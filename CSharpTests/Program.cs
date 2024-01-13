@@ -2,11 +2,12 @@
 using System.Runtime.CompilerServices;
 
 Console.WriteLine("Starting tests");
-VoxelChunkTests.Test0();
-VoxelChunkTests.Test1();
-VoxelChunkTests.Test2();
-VoxelChunkTests.Test3();
-VoxelChunkTests.Test4();
+// VoxelChunkTests.Test0();
+// VoxelChunkTests.Test1();
+// VoxelChunkTests.Test2();
+// VoxelChunkTests.Test3();
+// VoxelChunkTests.Test4();
+VoxelChunkTests.Test5();
 Console.WriteLine("All tests completed");
 
 class VoxelChunkTests
@@ -190,9 +191,38 @@ class VoxelChunkTests
     }
     static public void Test5()
     {
-        // TODO: try to really push the performance
-        // of read / write times to chunks and memory
-        // usage
+        float performanceCount = 25;
+        Stopwatch watch = new();
+        watch.Start();
+        for (int _ = 0; _ < performanceCount; _++)
+        {
+            VoxelChunk chunk = new();
+            for (int x = 0; x < 16; x++)
+            {
+                for (int y = 0; y < 16; y++)
+                {
+                    for (int z = 0; z < 16; z++)
+                    {
+                        chunk.SetBlock(new(x, y, z), x + (y * 16) + (z * 16 * 16));
+                    }
+                }
+            }
+
+            for (int x = 0; x < 16; x++)
+            {
+                for (int y = 0; y < 16; y++)
+                {
+                    for (int z = 0; z < 16; z++)
+                    {
+                        chunk.GetBlock(new(x, y, z));
+                    }
+                }
+            }
+        }
+        watch.Stop();
+        Console.WriteLine($"Worst case of a read and write operation, runs at " +
+        $"{watch.ElapsedMilliseconds / (performanceCount * 4096)}ms " +
+        "per operation on average.");
         return;
     }
 }
