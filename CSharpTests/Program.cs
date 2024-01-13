@@ -98,7 +98,6 @@ class VoxelChunkTests
         Console.WriteLine("Test1 passed");
         return;
     }
-
     static public void Test2()
     {
         VoxelChunk chunk = new();
@@ -124,7 +123,6 @@ class VoxelChunkTests
         Console.WriteLine("Test2 passed");
         return;
     }
-
     static public void Test3()
     {
         VoxelChunk chunk = new();
@@ -188,6 +186,13 @@ class VoxelChunkTests
         }
         Console.WriteLine($"total memory used: {(GC.GetTotalMemory(true) - memory) / 1000} KB " +
         $"for {count} chunks");
+        return;
+    }
+    static public void Test5()
+    {
+        // TODO: try to really push the performance
+        // of read / write times to chunks and memory
+        // usage
         return;
     }
 }
