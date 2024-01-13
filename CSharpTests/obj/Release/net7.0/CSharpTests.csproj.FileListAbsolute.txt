@@ -1,0 +1,15 @@
+C:\Users\Zachary\Documents\CSharpTests\CSharpTests\bin\Release\net7.0\CSharpTests.exe
+C:\Users\Zachary\Documents\CSharpTests\CSharpTests\bin\Release\net7.0\CSharpTests.deps.json
+C:\Users\Zachary\Documents\CSharpTests\CSharpTests\bin\Release\net7.0\CSharpTests.runtimeconfig.json
+C:\Users\Zachary\Documents\CSharpTests\CSharpTests\bin\Release\net7.0\CSharpTests.dll
+C:\Users\Zachary\Documents\CSharpTests\CSharpTests\bin\Release\net7.0\CSharpTests.pdb
+C:\Users\Zachary\Documents\CSharpTests\CSharpTests\obj\Release\net7.0\CSharpTests.csproj.AssemblyReference.cache
+C:\Users\Zachary\Documents\CSharpTests\CSharpTests\obj\Release\net7.0\CSharpTests.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Zachary\Documents\CSharpTests\CSharpTests\obj\Release\net7.0\CSharpTests.AssemblyInfoInputs.cache
+C:\Users\Zachary\Documents\CSharpTests\CSharpTests\obj\Release\net7.0\CSharpTests.AssemblyInfo.cs
+C:\Users\Zachary\Documents\CSharpTests\CSharpTests\obj\Release\net7.0\CSharpTests.csproj.CoreCompileInputs.cache
+C:\Users\Zachary\Documents\CSharpTests\CSharpTests\obj\Release\net7.0\CSharpTests.dll
+C:\Users\Zachary\Documents\CSharpTests\CSharpTests\obj\Release\net7.0\refint\CSharpTests.dll
+C:\Users\Zachary\Documents\CSharpTests\CSharpTests\obj\Release\net7.0\CSharpTests.pdb
+C:\Users\Zachary\Documents\CSharpTests\CSharpTests\obj\Release\net7.0\CSharpTests.genruntimeconfig.cache
+C:\Users\Zachary\Documents\CSharpTests\CSharpTests\obj\Release\net7.0\ref\CSharpTests.dll
