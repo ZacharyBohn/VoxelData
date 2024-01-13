@@ -193,6 +193,7 @@ class VoxelChunkTests
     {
         float performanceCount = 25;
         Stopwatch watch = new();
+        long memory = GC.GetTotalMemory(true);
         watch.Start();
         for (int _ = 0; _ < performanceCount; _++)
         {
@@ -223,6 +224,8 @@ class VoxelChunkTests
         Console.WriteLine($"Worst case of a read and write operation, runs at " +
         $"{watch.ElapsedMilliseconds / (performanceCount * 4096)}ms " +
         "per operation on average.");
+        Console.WriteLine($"total memory used: {(GC.GetTotalMemory(true) - memory) / 1000} KB " +
+        $"for {performanceCount} chunks");
         return;
     }
 }
