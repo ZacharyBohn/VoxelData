@@ -2,12 +2,13 @@
 using System.Runtime.CompilerServices;
 
 Console.WriteLine("Starting tests");
-VoxelChunkTests.Test0();
-VoxelChunkTests.Test1();
-VoxelChunkTests.Test2();
-VoxelChunkTests.Test3();
-VoxelChunkTests.Test4();
-VoxelChunkTests.Test5();
+// VoxelChunkTests.Test0();
+// VoxelChunkTests.Test1();
+// VoxelChunkTests.Test2();
+// VoxelChunkTests.Test3();
+// VoxelChunkTests.Test4();
+// VoxelChunkTests.Test5();
+VoxelChunkTests.Test6();
 Console.WriteLine("All tests completed");
 
 class VoxelChunkTests
@@ -228,6 +229,25 @@ class VoxelChunkTests
         Console.WriteLine($"total memory used: {memoryTotalKB} KB " +
         $"for {performanceCount} chunks");
         Console.WriteLine($"@ {memoryTotalKB / performanceCount} KB per chunk (worst case)");
+        return;
+    }
+
+    public static void Test6()
+    {
+        float performanceCount = 1000;
+        long memory = GC.GetTotalMemory(true);
+        List<VoxelChunk> chunks = new();
+        for (int _ = 0; _ < performanceCount; _++)
+        {
+            VoxelChunk chunk = new();
+            chunk.SetBlockSpan(new(0, 0, 0), new(15, 15, 15), 1);
+            chunks.Add(chunk);
+        }
+
+        long memoryTotalKB = (GC.GetTotalMemory(true) - memory) / 1000;
+        Console.WriteLine($"total memory used: {memoryTotalKB} KB " +
+        $"for {performanceCount} chunks");
+        Console.WriteLine($"@ {memoryTotalKB / performanceCount} KB per chunk (best case)");
         return;
     }
 }
