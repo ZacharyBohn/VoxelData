@@ -2,11 +2,11 @@
 using System.Runtime.CompilerServices;
 
 Console.WriteLine("Starting tests");
-// VoxelChunkTests.Test0();
-// VoxelChunkTests.Test1();
-// VoxelChunkTests.Test2();
-// VoxelChunkTests.Test3();
-// VoxelChunkTests.Test4();
+VoxelChunkTests.Test0();
+VoxelChunkTests.Test1();
+VoxelChunkTests.Test2();
+VoxelChunkTests.Test3();
+VoxelChunkTests.Test4();
 VoxelChunkTests.Test5();
 Console.WriteLine("All tests completed");
 
@@ -224,8 +224,10 @@ class VoxelChunkTests
         Console.WriteLine($"Worst case of a read and write operation, runs at " +
         $"{watch.ElapsedMilliseconds / (performanceCount * 4096)}ms " +
         "per operation on average.");
-        Console.WriteLine($"total memory used: {(GC.GetTotalMemory(true) - memory) / 1000} KB " +
+        long memoryTotalKB = (GC.GetTotalMemory(true) - memory) / 1000;
+        Console.WriteLine($"total memory used: {memoryTotalKB} KB " +
         $"for {performanceCount} chunks");
+        Console.WriteLine($"@ {memoryTotalKB / performanceCount} KB per chunk (worst case)");
         return;
     }
 }
