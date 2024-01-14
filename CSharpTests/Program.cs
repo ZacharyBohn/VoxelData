@@ -2,12 +2,12 @@
 using System.Runtime.CompilerServices;
 
 Console.WriteLine("Starting tests");
-// VoxelChunkTests.Test0();
-// VoxelChunkTests.Test1();
-// VoxelChunkTests.Test2();
-// VoxelChunkTests.Test3();
-// VoxelChunkTests.Test4();
-// VoxelChunkTests.Test5();
+VoxelChunkTests.Test0();
+VoxelChunkTests.Test1();
+VoxelChunkTests.Test2();
+VoxelChunkTests.Test3();
+VoxelChunkTests.Test4();
+VoxelChunkTests.Test5();
 VoxelChunkTests.Test6();
 Console.WriteLine("All tests completed");
 
