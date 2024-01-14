@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Runtime.CompilerServices;
 
 Console.WriteLine("Starting tests");
 VoxelChunkTests.Test0();
