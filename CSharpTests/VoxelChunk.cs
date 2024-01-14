@@ -7,7 +7,7 @@ using System.Diagnostics;
 /// 
 /// 1000 VoxelChunks with an average of 25 unique blocks
 /// per chunk, and reasonably split up geometry should
-/// take up ~50MB of memory. Getting and setting a single
+/// take up ~10MB of memory. Getting and setting a single
 /// block should take ~0.05ms
 /// </summary>
 class VoxelChunk
@@ -215,6 +215,11 @@ class VoxelChunk
             }
             return total;
         }
+    }
+
+    public List<Quad> GenerateQuads()
+    {
+        return new();
     }
 }
 
@@ -679,4 +684,31 @@ readonly struct Point3D
     {
         return "(" + X + ", " + Y + ", " + Z + ")";
     }
+}
+
+readonly struct Quad
+{
+
+    public readonly Point3D BlockId;
+    public readonly Point3D Point1;
+    public readonly Point3D Point2;
+    public readonly Point3D Point3;
+    public readonly Point3D Point4;
+
+    public Quad(
+        Point3D blockId,
+        Point3D point1,
+        Point3D point2,
+        Point3D point3,
+        Point3D point4
+    )
+    {
+        BlockId = blockId;
+        Point1 = point1;
+        Point2 = point2;
+        Point3 = point3;
+        Point4 = point4;
+        return;
+    }
+
 }
