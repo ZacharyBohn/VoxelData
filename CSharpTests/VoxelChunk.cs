@@ -530,24 +530,6 @@ struct CuboidSpan
     /// </summary>
     public readonly bool CanMerge(CuboidSpan other)
     {
-        /*
-        just failed on
-        Start(1, 1, 1), End(1, 15, 1)
-        
-        other
-        Start(1, 0, 1), End(1, 0, 1)
-
-        if they are adjacent, then either
-        a.end + 1 = b.start
-        OR
-        b.end + 1 = a.start
-
-        translates to
-
-        (End.X + 1 == other.Start.X) || (other.End.X + 1 == Start.X)
-
-
-        */
         // x adjacent
         if ((End.X + 1 == other.Start.X) || (other.End.X + 1 == Start.X))
         {
