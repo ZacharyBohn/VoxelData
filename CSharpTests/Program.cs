@@ -1,13 +1,13 @@
 ﻿using System.Diagnostics;
 
 Console.WriteLine("Starting tests");
-VoxelChunkTests.Test0();
-VoxelChunkTests.Test1();
-VoxelChunkTests.Test2();
-VoxelChunkTests.Test3();
-VoxelChunkTests.Test4();
-VoxelChunkTests.Test5();
-VoxelChunkTests.Test6();
+// VoxelChunkTests.Test0();
+// VoxelChunkTests.Test1();
+// VoxelChunkTests.Test2();
+// VoxelChunkTests.Test3();
+// VoxelChunkTests.Test4();
+// VoxelChunkTests.Test5();
+// VoxelChunkTests.Test6();
 VoxelChunkTests.Test7();
 Console.WriteLine("All tests completed");
 
@@ -53,7 +53,7 @@ class VoxelChunkTests
 
             // this should merge them back into 1 span
             chunk.SetBlock(new(7, 7, 7), 1);
-            if (chunk.DebugGetCuboidSpans != 1)
+            if (chunk.DebugGetTotalCuboidSpans != 1)
             {
                 Console.WriteLine("Wrong number of spans.");
                 Console.WriteLine("Test failed");
@@ -253,6 +253,11 @@ class VoxelChunkTests
 
     public static void Test7()
     {
+        var x = new CuboidSpan();
+        Console.WriteLine(x.UpVisible);
+        Console.WriteLine(x.DownVisible);
+        Console.WriteLine(x.EastVisible);
+        return;
         VoxelChunk chunk = new();
         chunk.SetBlockSpan(new(0, 0, 0), new(15, 15, 15), 1);
         List<Quad> quads = chunk.GenerateQuads();

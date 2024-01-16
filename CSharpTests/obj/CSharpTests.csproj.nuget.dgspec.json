@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Zachary\\Documents\\CSharpTests\\CSharpTests\\CSharpTests.csproj": {}
+    "c:\\Users\\Zachary\\Documents\\CSharpTests\\CSharpTests\\CSharpTests.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Zachary\\Documents\\CSharpTests\\CSharpTests\\CSharpTests.csproj": {
+    "c:\\Users\\Zachary\\Documents\\CSharpTests\\CSharpTests\\CSharpTests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Zachary\\Documents\\CSharpTests\\CSharpTests\\CSharpTests.csproj",
+        "projectUniqueName": "c:\\Users\\Zachary\\Documents\\CSharpTests\\CSharpTests\\CSharpTests.csproj",
         "projectName": "CSharpTests",
-        "projectPath": "C:\\Users\\Zachary\\Documents\\CSharpTests\\CSharpTests\\CSharpTests.csproj",
+        "projectPath": "c:\\Users\\Zachary\\Documents\\CSharpTests\\CSharpTests\\CSharpTests.csproj",
         "packagesPath": "C:\\Users\\Zachary\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Zachary\\Documents\\CSharpTests\\CSharpTests\\obj\\",
+        "outputPath": "c:\\Users\\Zachary\\Documents\\CSharpTests\\CSharpTests\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Zachary\\AppData\\Roaming\\NuGet\\NuGet.Config",

@@ -204,7 +204,7 @@ class VoxelChunk
         return value;
     }
 
-    public int DebugGetCuboidSpans
+    public int DebugGetTotalCuboidSpans
     {
         get
         {
@@ -219,6 +219,13 @@ class VoxelChunk
 
     public List<Quad> GenerateQuads()
     {
+        // inserting a new block
+        // how to hide faces of other spans?
+        //
+        // assume that everything is visible until
+        // proven invisible.
+        // 
+        // when are faces invisible?
         return new();
     }
 }
@@ -254,6 +261,8 @@ struct CuboidSpan
     private const int southVisibleMask = 1 << 3;
     private const int westVisibleMask = 1 << 2;
     private const int eastVisibleMask = 1 << 1;
+    private const int allFacesVisibleMask = (1 << 7) - 1;
+
     public readonly Point3D Start
     {
         get
@@ -364,6 +373,7 @@ struct CuboidSpan
     public CuboidSpan()
     {
         data = 0;
+        SetAllFacesVisible();
         return;
     }
 
@@ -374,6 +384,7 @@ struct CuboidSpan
         Debug.Assert(start.Z <= end.Z);
         SetStart(start);
         SetEnd(end);
+        SetAllFacesVisible();
         return;
     }
 
@@ -393,6 +404,12 @@ struct CuboidSpan
         // sets start to 0,0,0
         data &= ~(endMask << 7);
         data |= end.ToInt() << 7;
+        return;
+    }
+
+    private void SetAllFacesVisible()
+    {
+        data |= allFacesVisibleMask;
         return;
     }
 
