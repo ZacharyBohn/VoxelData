@@ -590,11 +590,6 @@ struct CuboidSpan
             Math.Min(Start.Z, other.Start.Z)
             )
         );
-        var end = new Point3D(
-            Math.Max(End.X, other.End.X),
-            Math.Max(End.Y, other.End.Y),
-            Math.Max(End.Z, other.End.Z)
-        );
         SetEnd(
             new Point3D(
             Math.Max(End.X, other.End.X),
