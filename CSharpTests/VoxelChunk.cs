@@ -226,6 +226,8 @@ class VoxelChunk
         // proven invisible.
         // 
         // when are faces invisible?
+        // - when a non zero block is set,
+        // and a span must be split
         return new();
     }
 }
@@ -240,28 +242,27 @@ struct CuboidSpan
 {
     // int must be 32bit
     private int data;
-    // 15 = 0b1111 so that can be used to mask off
-    // exactly 4 bits within the int
-    // first bit is reserved by int to allow for negatives
-    // this will be ignored
-    // next 12 bits represent start Point3D
-    // first 4 = x, second 4 = y, third 4 = z
-    // second 12 bits represent end Point3D
-    // next 6 bits represent which faces are visible
-    // last bit does nothing
-    private const int startXMask = 15 << 27;
-    private const int startYMask = 15 << 23;
-    private const int startZMask = 15 << 19;
-    private const int endXMask = 15 << 15;
-    private const int endYMask = 15 << 11;
-    private const int endZMask = 15 << 7;
+    // first and last bit of data are not used
+
+    // 4 bits, starting at bit 28
+    private const int startXMask = 0b1111 << 27;
+    // 4 bits, starting at bit 24
+    private const int startYMask = 0b1111 << 23;
+    // 4 bits, starting at bit 20
+    private const int startZMask = 0b1111 << 19;
+    // 4 bits, starting at bit 16
+    private const int endXMask = 0b1111 << 15;
+    // 4 bits, starting at bit 12
+    private const int endYMask = 0b1111 << 11;
+    // 4 bits, starting at bit 8
+    private const int endZMask = 0b1111 << 7;
     private const int upVisibleMask = 1 << 6;
     private const int downVisibleMask = 1 << 5;
     private const int northVisibleMask = 1 << 4;
     private const int southVisibleMask = 1 << 3;
     private const int westVisibleMask = 1 << 2;
     private const int eastVisibleMask = 1 << 1;
-    private const int allFacesVisibleMask = (1 << 7) - 1;
+    private const int allFacesVisibleMask = 0b111_1110;
 
     public readonly Point3D Start
     {
