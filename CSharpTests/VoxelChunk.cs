@@ -240,9 +240,12 @@ class VoxelChunk
 /// </summary>
 struct CuboidSpan
 {
+    private readonly ushort id;
+
     // int must be 32bit
     // first two bits are not currently used
     private int data;
+
 
     // 4 bits to used encode either x, y, or z
     // for start and end
@@ -383,6 +386,7 @@ struct CuboidSpan
     public CuboidSpan()
     {
         data = 0;
+        id = 0;
         SetAllFacesVisible();
         return;
     }
@@ -392,6 +396,18 @@ struct CuboidSpan
         Debug.Assert(start.X <= end.X);
         Debug.Assert(start.Y <= end.Y);
         Debug.Assert(start.Z <= end.Z);
+        SetStart(start);
+        SetEnd(end);
+        SetAllFacesVisible();
+        return;
+    }
+
+    public CuboidSpan(ushort id, Point3D start, Point3D end)
+    {
+        Debug.Assert(start.X <= end.X);
+        Debug.Assert(start.Y <= end.Y);
+        Debug.Assert(start.Z <= end.Z);
+        this.id = id;
         SetStart(start);
         SetEnd(end);
         SetAllFacesVisible();
