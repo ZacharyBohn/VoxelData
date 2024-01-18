@@ -241,37 +241,46 @@ class VoxelChunk
 struct CuboidSpan
 {
     // int must be 32bit
+    // first two bits are not currently used
     private int data;
-    // first and last bit of data are not used
 
-    // 4 bits, starting at bit 28
-    private const int startXMask = 0b1111 << 27;
-    // 4 bits, starting at bit 24
-    private const int startYMask = 0b1111 << 23;
-    // 4 bits, starting at bit 20
-    private const int startZMask = 0b1111 << 19;
-    // 4 bits, starting at bit 16
-    private const int endXMask = 0b1111 << 15;
-    // 4 bits, starting at bit 12
-    private const int endYMask = 0b1111 << 11;
-    // 4 bits, starting at bit 8
-    private const int endZMask = 0b1111 << 7;
-    private const int upVisibleMask = 1 << 6;
-    private const int downVisibleMask = 1 << 5;
-    private const int northVisibleMask = 1 << 4;
-    private const int southVisibleMask = 1 << 3;
-    private const int westVisibleMask = 1 << 2;
-    private const int eastVisibleMask = 1 << 1;
-    private const int allFacesVisibleMask = 0b111_1110;
+    // 4 bits to used encode either x, y, or z
+    // for start and end
+    private const int positionAxisMask = 0b1111;
+
+    // just twelve bits set. in order to get the actual mask
+    // need to left shift by z position of either start or end
+    private const int startEndMask = (1 << 12) - 1;
+    private const int startXMaskPosition = 26;
+    private const int startXMask = positionAxisMask << startXMaskPosition;
+    private const int startYMaskPosition = 22;
+    private const int startYMask = positionAxisMask << startYMaskPosition;
+    private const int startZMaskPosition = 18;
+    private const int startZMask = positionAxisMask << startZMaskPosition;
+    private const int endXMaskPosition = 14;
+    private const int endXMask = positionAxisMask << endXMaskPosition;
+    private const int endYMaskPosition = 10;
+    private const int endYMask = positionAxisMask << endYMaskPosition;
+    private const int endZMaskPosition = 6;
+    private const int endZMask = positionAxisMask << endZMaskPosition;
+
+    private const int upVisibleMask = 1 << 5;
+    private const int downVisibleMask = 1 << 4;
+    private const int northVisibleMask = 1 << 3;
+    private const int southVisibleMask = 1 << 2;
+    private const int westVisibleMask = 1 << 1;
+    private const int eastVisibleMask = 1 << 0;
+
+    private const int allFacesVisibleMask = 0b11_1111;
 
     public readonly Point3D Start
     {
         get
         {
             return new Point3D(
-                (data & startXMask) >> 27,
-                (data & startYMask) >> 23,
-                (data & startZMask) >> 19
+                (data & startXMask) >> startXMaskPosition,
+                (data & startYMask) >> startYMaskPosition,
+                (data & startZMask) >> startZMaskPosition
                 );
         }
     }
@@ -280,9 +289,9 @@ struct CuboidSpan
         get
         {
             return new Point3D(
-                (data & endXMask) >> 15,
-                (data & endYMask) >> 11,
-                (data & endZMask) >> 7
+                (data & endXMask) >> endXMaskPosition,
+                (data & endYMask) >> endYMaskPosition,
+                (data & endZMask) >> endZMaskPosition
                 );
         }
     }
@@ -391,20 +400,16 @@ struct CuboidSpan
 
     private void SetStart(Point3D start)
     {
-        // creates 12 1's
-        int startMask = (1 << 12) - 1;
         // sets start to 0,0,0
-        data &= ~(startMask << 19);
-        data |= start.ToInt() << 19;
+        data &= ~(startEndMask << startZMaskPosition);
+        data |= start.ToInt() << startZMaskPosition;
         return;
     }
     private void SetEnd(Point3D end)
     {
-        // creates 12 1's
-        int endMask = (1 << 12) - 1;
-        // sets start to 0,0,0
-        data &= ~(endMask << 7);
-        data |= end.ToInt() << 7;
+        // sets end to 0,0,0
+        data &= ~(startEndMask << endZMaskPosition);
+        data |= end.ToInt() << endZMaskPosition;
         return;
     }
 
