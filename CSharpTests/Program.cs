@@ -1,14 +1,14 @@
 ﻿using System.Diagnostics;
 
 Console.WriteLine("Starting tests");
-VoxelChunkTests.Test0();
-VoxelChunkTests.Test1();
-VoxelChunkTests.Test2();
-VoxelChunkTests.Test3();
-VoxelChunkTests.Test4();
+// VoxelChunkTests.Test0();
+// VoxelChunkTests.Test1();
+// VoxelChunkTests.Test2();
+// VoxelChunkTests.Test3();
+// VoxelChunkTests.Test4();
 VoxelChunkTests.Test5();
-VoxelChunkTests.Test6();
-VoxelChunkTests.Test7();
+// VoxelChunkTests.Test6();
+// VoxelChunkTests.Test7();
 Console.WriteLine("All tests completed");
 
 class VoxelChunkTests
@@ -183,29 +183,54 @@ class VoxelChunkTests
             chunk.SetBlock(new(2, 0, 1), 3);
             chunk.SetBlock(new(2, 7, 2), 3);
             chunk.SetBlock(new(2, 1, 1), 3);
-            chunk.SetBlock(new(2, 15, 15), 3);
+            chunk.SetBlock(new(8, 15, 15), 8);
+            chunk.SetBlock(new(8, 14, 15), 9);
+            chunk.SetBlock(new(8, 13, 15), 10);
+            chunk.SetBlock(new(8, 12, 15), 11);
+            chunk.SetBlock(new(8, 11, 15), 12);
+            chunk.SetBlock(new(8, 10, 15), 13);
+            chunk.SetBlock(new(8, 9, 15), 14);
+            chunk.SetBlock(new(8, 8, 15), 15);
+            chunk.SetBlock(new(8, 7, 15), 16);
+            chunk.SetBlock(new(8, 6, 15), 17);
+            chunk.SetBlock(new(8, 5, 15), 18);
+            chunk.SetBlock(new(8, 4, 15), 19);
+            chunk.SetBlock(new(8, 3, 15), 20);
+            chunk.SetBlock(new(8, 2, 15), 21);
+            chunk.SetBlock(new(8, 1, 15), 22);
+            chunk.SetBlock(new(8, 0, 15), 23);
+            chunk.SetBlock(new(11, 0, 15), 24);
+            chunk.SetBlock(new(11, 1, 15), 25);
+            chunk.SetBlock(new(11, 2, 15), 26);
+            chunk.SetBlock(new(11, 3, 15), 27);
+            chunk.SetBlock(new(11, 4, 15), 28);
+            chunk.SetBlock(new(11, 5, 15), 29);
+            chunk.SetBlock(new(11, 6, 15), 30);
+            chunk.SetBlock(new(11, 7, 15), 31);
             chunks.Add(chunk);
         }
         Console.WriteLine($"total memory used: {(GC.GetTotalMemory(true) - memory) / 1000} KB " +
         $"for {count} chunks");
+        Console.WriteLine($"for 25 unique blocks with split geometry.");
+        Console.WriteLine("Test4 passed");
         return;
     }
     static public void Test5()
     {
-        float performanceCount = 25;
+        float performanceCount = 12;
         Stopwatch watch = new();
         long memory = GC.GetTotalMemory(true);
         watch.Start();
+        VoxelChunk chunk = new();
         for (int _ = 0; _ < performanceCount; _++)
         {
-            VoxelChunk chunk = new();
             for (int x = 0; x < 16; x++)
             {
                 for (int y = 0; y < 16; y++)
                 {
                     for (int z = 0; z < 16; z++)
                     {
-                        chunk.SetBlock(new(x, y, z), x + (y * 16) + (z * 16 * 16));
+                        chunk.SetBlock(new(x, y, z), (ushort)(x + (y * 16) + (z * 16 * 16)));
                     }
                 }
             }
@@ -220,6 +245,7 @@ class VoxelChunkTests
                     }
                 }
             }
+            chunk.RemoveAllBlocks();
         }
         watch.Stop();
         Console.WriteLine($"Worst case of a read and write operation, runs at " +

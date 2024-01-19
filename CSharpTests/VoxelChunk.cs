@@ -3,46 +3,48 @@ using System.Diagnostics;
 /// <summary>
 /// Stores a 16x16x16 grid of ints in a very memory
 /// efficient way. The storage method also allows
-/// for very quickly generating vertices.
+/// for very quickly generating meshes.
 /// 
-/// 1000 VoxelChunks with an average of 25 unique blocks
-/// per chunk, and reasonably split up geometry should
-/// take up ~10MB of memory. Getting and setting a single
-/// block should take ~0.05ms
+/// 8000 VoxelChunks will take up 15MB of memory in the worst
+/// case which is 4096 unique blocks within a VoxelChunk. This
+/// is very unlikely.
+/// 
+/// 8000 VoxelChunks with the average case of 25 unique
+/// blocks with reasonably split geometry should take up
+/// less than 6MB.
+/// 
+/// 8000 non-empty VoxelChunks best case will take up
+/// less than 2KB of memory.
+/// 
+/// The trade off for this efficiency is that read / 
+/// write speed is slow. Setting a block worst case
+/// is 2-3 ms. And reading a block from a position
+/// worst case is 2-3 ms.
 /// </summary>
 class VoxelChunk
 {
     /// <summary>
     /// block id to block spans of that block type
     /// </summary>
-    private readonly Dictionary<int, List<CuboidSpan>> Blocks;
-    private List<int> BlockIds
-    {
-        get
-        {
-            return Blocks.Keys.ToList();
-        }
-    }
+    private readonly List<CuboidSpan> Spans;
 
     public VoxelChunk()
     {
-        Blocks = new Dictionary<int, List<CuboidSpan>>();
+        Spans = new();
         return;
     }
 
     public int GetBlock(Point3D position)
     {
-        foreach (KeyValuePair<int, List<CuboidSpan>> keyValuePair in Blocks)
+        foreach (CuboidSpan span in Spans)
         {
-            foreach (CuboidSpan span in keyValuePair.Value)
-            {
-                if (span.Contains(position)) return keyValuePair.Key;
-            }
+            if (span.Contains(position)) return span.Id;
         }
+
         return 0;
     }
 
-    public void SetBlock(Point3D position, int blockId)
+    public void SetBlock(Point3D position, ushort blockId)
     {
         SetBlockSpan(position, position, blockId);
         return;
@@ -60,28 +62,18 @@ class VoxelChunk
     public void SetBlockSpan(
         Point3D startPosition,
         Point3D endPosition, // inclusive
-        int blockId
+        ushort blockId
         )
     {
-        Split(new(startPosition, endPosition));
+        CuboidSpan span = new(blockId, startPosition, endPosition);
+        Split(span);
         if (blockId == 0)
         {
             return;
         }
 
-        if (!BlockIds.Contains(blockId))
-        {
-            Blocks[blockId] = new List<CuboidSpan>() { new(startPosition, endPosition) };
-            return;
-        }
-
-        CuboidSpan span = new(startPosition, endPosition);
-        if (MergeAll(blockId, span))
-        {
-            return;
-        }
-
-        Blocks[blockId].Add(span);
+        Spans.Add(span);
+        MergeRecursively(span);
         return;
     }
 
@@ -92,13 +84,13 @@ class VoxelChunk
     /// </summary>
     /// <returns>true if any merges completed. Otherwise
     /// returns false</returns>
-    private bool MergeAll(int blockId, CuboidSpan span)
+    private bool MergeRecursively(CuboidSpan span)
     {
         // span does not need to be removed from the Blocks
         // since it is the newly created span coming in.
         // however, all other spans that can be merged recursively
         // must be removed from Blocks.
-        CuboidSpan? mergedSpan = MergeIn(blockId, span);
+        CuboidSpan? mergedSpan = MergeWithNeighbors(span);
         if (mergedSpan == null)
         {
             return false;
@@ -106,8 +98,7 @@ class VoxelChunk
         // mergedSpan needs to be recursively merged
         while (mergedSpan != null)
         {
-            mergedSpan = MergeIn(
-                blockId,
+            mergedSpan = MergeWithNeighbors(
                 (CuboidSpan)mergedSpan,
                 true
             );
@@ -125,28 +116,28 @@ class VoxelChunk
     /// </summary>
     /// <returns>The CuboidSpan that was just updated
     /// from the merge or null if no merge occurred.</returns>
-    private CuboidSpan? MergeIn(
-        int blockId,
+    private CuboidSpan? MergeWithNeighbors(
         CuboidSpan span,
         bool removeOldSpan = false
     )
     {
         // TODO: may be possible to optimize this search with a
         // cache or something?
-        for (int x = 0; x < Blocks[blockId].Count; x++)
+        for (int x = 0; x < Spans.Count; x++)
         {
-            if (span.CanMerge(Blocks[blockId][x]))
+            if (span.CanMerge(Spans[x]))
             {
-                var mergedSpan = Blocks[blockId][x];
+                CuboidSpan mergedSpan = Spans[x];
                 mergedSpan.Merge(span);
-                Blocks[blockId][x] = mergedSpan;
+                Spans[x] = mergedSpan;
                 if (removeOldSpan)
                 {
-                    Blocks[blockId].Remove(span);
+                    Spans.Remove(span);
                 }
                 return mergedSpan;
             }
         }
+
         return null;
     }
 
@@ -156,6 +147,12 @@ class VoxelChunk
         )
     {
         SetBlockSpan(startPosition, endPosition, 0);
+        return;
+    }
+
+    public void RemoveAllBlocks()
+    {
+        Spans.Clear();
         return;
     }
 
@@ -169,21 +166,17 @@ class VoxelChunk
     /// </summary>
     private void Split(CuboidSpan splitter, int exclude = -1)
     {
-        // to copy the list
-        List<int> blockIds = BlockIds.ToList();
-        // does nothing if exclude is not found in the list
-        // so this is safe
-        blockIds.Remove(exclude);
-        foreach (int blockId in blockIds)
+        // TODO: like 80% of the time for setting / getting
+        // a block, is spent in this function (verified)
+        // could sort spans by x,z,y.
+        // need to implement and then time it.
+        for (int x = 0; x < Spans.Count; x++)
         {
-            for (int x = 0; x < Blocks[blockId].Count; x++)
+            if (Spans[x].Intersects(splitter))
             {
-                if (Blocks[blockId][x].Intersects(splitter))
-                {
-                    CuboidSpan span = Blocks[blockId][x];
-                    Blocks[blockId].Remove(span);
-                    Blocks[blockId].AddRange(span.Split(splitter));
-                }
+                CuboidSpan span = Spans[x];
+                Spans.Remove(span);
+                Spans.AddRange(span.Split(splitter));
             }
         }
         return;
@@ -192,14 +185,10 @@ class VoxelChunk
     public override string ToString()
     {
         string value = "";
-        foreach (KeyValuePair<int, List<CuboidSpan>> valuePair in Blocks)
+        foreach (CuboidSpan span in Spans)
         {
-            value += $"blockId: {valuePair.Key}\n";
-            foreach (CuboidSpan span in valuePair.Value)
-            {
-                value += $"{span}\n";
-            }
-            value += "\n\n";
+            value += $"blockId: {span.Id}\n";
+            value += $"{span}\n\n";
         }
         return value;
     }
@@ -208,12 +197,7 @@ class VoxelChunk
     {
         get
         {
-            int total = 0;
-            foreach (KeyValuePair<int, List<CuboidSpan>> valuePair in Blocks)
-            {
-                total += valuePair.Value.Count;
-            }
-            return total;
+            return Spans.Count;
         }
     }
 
@@ -241,6 +225,13 @@ class VoxelChunk
 struct CuboidSpan
 {
     private readonly ushort id;
+    public readonly int Id
+    {
+        get
+        {
+            return id;
+        }
+    }
 
     // int must be 32bit
     // first two bits are not currently used
@@ -396,6 +387,7 @@ struct CuboidSpan
         Debug.Assert(start.X <= end.X);
         Debug.Assert(start.Y <= end.Y);
         Debug.Assert(start.Z <= end.Z);
+        id = 0;
         SetStart(start);
         SetEnd(end);
         SetAllFacesVisible();
@@ -482,6 +474,7 @@ struct CuboidSpan
         {
             cuboids.Add(
                 new CuboidSpan(
+                    id,
                     Start,
                     new Point3D(exclude.Start.X - 1, End.Y, End.Z)
                 )
@@ -492,6 +485,7 @@ struct CuboidSpan
         {
             cuboids.Add(
                 new CuboidSpan(
+                    id,
                     new Point3D(exclude.End.X + 1, Start.Y, Start.Z),
                     End
                 )
@@ -504,6 +498,7 @@ struct CuboidSpan
         {
             cuboids.Add(
                 new CuboidSpan(
+                    id,
                     new Point3D(exclude.Start.X, Start.Y, exclude.End.Z + 1),
                     new Point3D(exclude.End.X, End.Y, End.Z)
                 )
@@ -514,6 +509,7 @@ struct CuboidSpan
         {
             cuboids.Add(
                 new CuboidSpan(
+                    id,
                     new Point3D(exclude.Start.X, Start.Y, Start.Z),
                     new Point3D(exclude.End.X, End.Y, exclude.Start.Z - 1)
                 )
@@ -526,6 +522,7 @@ struct CuboidSpan
         {
             cuboids.Add(
                 new CuboidSpan(
+                    id,
                     new Point3D(exclude.Start.X, exclude.End.Y + 1, exclude.Start.Z),
                     new Point3D(exclude.End.X, End.Y, exclude.End.Z)
                 )
@@ -536,6 +533,7 @@ struct CuboidSpan
         {
             cuboids.Add(
                 new CuboidSpan(
+                    id,
                     new Point3D(exclude.Start.X, Start.Y, exclude.Start.Z),
                     new Point3D(exclude.End.X, exclude.Start.Y - 1, exclude.End.Z)
                 )
@@ -552,6 +550,10 @@ struct CuboidSpan
     /// </summary>
     public readonly bool CanMerge(CuboidSpan other)
     {
+        if (id != other.id)
+        {
+            return false;
+        }
         // x adjacent
         if ((End.X + 1 == other.Start.X) || (other.End.X + 1 == Start.X))
         {
@@ -631,6 +633,7 @@ struct CuboidSpan
     public readonly CuboidSpan Expand()
     {
         return new CuboidSpan(
+            id,
             new Point3D(
                 Math.Max(Start.X - 1, 0),
                 Math.Max(Start.Y - 1, 0),
@@ -646,7 +649,7 @@ struct CuboidSpan
 
     public override readonly string ToString()
     {
-        return $"Start: {Start}, End: {End}";
+        return $"ID: {id}, Start: {Start}, End: {End}";
     }
 }
 
