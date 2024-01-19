@@ -14,7 +14,7 @@ using System.Diagnostics;
 /// less than 6MB.
 /// 
 /// 8000 non-empty VoxelChunks best case will take up
-/// less than 2KB of memory.
+/// less than 1MB of memory.
 /// 
 /// The trade off for this efficiency is that read / 
 /// write speed is slow. Setting a block worst case

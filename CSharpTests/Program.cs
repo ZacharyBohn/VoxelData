@@ -1,14 +1,14 @@
 ﻿using System.Diagnostics;
 
 Console.WriteLine("Starting tests");
-// VoxelChunkTests.Test0();
-// VoxelChunkTests.Test1();
-// VoxelChunkTests.Test2();
-// VoxelChunkTests.Test3();
-// VoxelChunkTests.Test4();
+VoxelChunkTests.Test0();
+VoxelChunkTests.Test1();
+VoxelChunkTests.Test2();
+VoxelChunkTests.Test3();
+VoxelChunkTests.Test4();
 VoxelChunkTests.Test5();
-// VoxelChunkTests.Test6();
-// VoxelChunkTests.Test7();
+VoxelChunkTests.Test6();
+VoxelChunkTests.Test7();
 Console.WriteLine("All tests completed");
 
 class VoxelChunkTests
@@ -274,6 +274,7 @@ class VoxelChunkTests
         Console.WriteLine($"total memory used: {memoryTotalKB} KB " +
         $"for {performanceCount} chunks");
         Console.WriteLine($"@ {memoryTotalKB / performanceCount} KB per chunk (best case)");
+        chunks.Clear();
         return;
     }
 
