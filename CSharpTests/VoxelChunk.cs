@@ -1,11 +1,21 @@
 using System.Diagnostics;
 
+/*
+TODO:
+increase read/write speed by implementing a
+sort that goes x,z,y on spans
+
+implement visibility of faces
+
+implement generating of meshes
+*/
+
 /// <summary>
 /// Stores a 16x16x16 grid of ints in a very memory
 /// efficient way. The storage method also allows
 /// for very quickly generating meshes.
 /// 
-/// 8000 VoxelChunks will take up 15MB of memory in the worst
+/// 8000 VoxelChunks will take up 264MB of memory in the worst
 /// case which is 4096 unique blocks within a VoxelChunk. This
 /// is very unlikely.
 /// 
@@ -213,6 +223,17 @@ class VoxelChunk
         // - when a non zero block is set,
         // and a span must be split
         return new();
+    }
+
+    public VoxelChunk Clone()
+    {
+        var chunk = new VoxelChunk();
+        foreach (CuboidSpan span in Spans)
+        {
+
+            chunk.SetBlockSpan(span.Start, span.End, (ushort)span.Id);
+        }
+        return chunk;
     }
 }
 

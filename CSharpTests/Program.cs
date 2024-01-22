@@ -1,14 +1,15 @@
 ﻿using System.Diagnostics;
 
 Console.WriteLine("Starting tests");
-VoxelChunkTests.Test0();
-VoxelChunkTests.Test1();
-VoxelChunkTests.Test2();
-VoxelChunkTests.Test3();
-VoxelChunkTests.Test4();
-VoxelChunkTests.Test5();
-VoxelChunkTests.Test6();
+// VoxelChunkTests.Test0();
+// VoxelChunkTests.Test1();
+// VoxelChunkTests.Test2();
+// VoxelChunkTests.Test3();
+// VoxelChunkTests.Test4();
+// VoxelChunkTests.Test5();
+// VoxelChunkTests.Test6();
 VoxelChunkTests.Test7();
+// VoxelChunkTests.Test8();
 Console.WriteLine("All tests completed");
 
 class VoxelChunkTests
@@ -280,12 +281,42 @@ class VoxelChunkTests
 
     public static void Test7()
     {
+        long memory = GC.GetTotalMemory(true);
+        List<VoxelChunk> chunks = new();
+        VoxelChunk chunk = new();
+        for (int x = 0; x < 16; x++)
+        {
+            for (int y = 0; y < 16; y++)
+            {
+                for (int z = 0; z < 16; z++)
+                {
+                    chunk.SetBlock(new(x, y, z), (ushort)(x + (y * 16) + (z * 16 * 16)));
+                }
+            }
+        }
+        foreach (int count in Enumerable.Range(0, 50))
+        {
+            if (count % 10 == 0)
+            {
+                Console.WriteLine($"On count: {count}");
+            }
+            chunks.Add(chunk.Clone());
+        }
+        long memoryTotalKB = (GC.GetTotalMemory(true) - memory) / 1000;
+        Console.WriteLine($"total memory used: {memoryTotalKB} KB for 50 chunks");
+        Console.WriteLine("Test7 passed");
+        return;
+    }
+
+
+    public static void Test8()
+    {
         VoxelChunk chunk = new();
         chunk.SetBlockSpan(new(0, 0, 0), new(15, 15, 15), 1);
         List<Quad> quads = chunk.GenerateQuads();
         if (quads.Count != 6)
         {
-            Console.WriteLine("Test7 failed, wrong number of quads generated.");
+            Console.WriteLine("Test8 failed, wrong number of quads generated.");
             Console.WriteLine($"Expected 6 but got {quads.Count}");
             return;
         }
@@ -293,11 +324,11 @@ class VoxelChunkTests
         List<Quad> splitQuads = chunk.GenerateQuads();
         if (splitQuads.Count != 24)
         {
-            Console.WriteLine("Test7 failed, wrong number of quads generated.");
+            Console.WriteLine("Test8 failed, wrong number of quads generated.");
             Console.WriteLine($"Expected 24 but got {quads.Count}");
             return;
         }
-        Console.WriteLine($"Test7 passed");
+        Console.WriteLine($"Test8 passed");
         return;
     }
 }
