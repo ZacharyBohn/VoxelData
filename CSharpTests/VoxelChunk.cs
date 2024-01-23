@@ -11,25 +11,45 @@ implement generating of meshes
 */
 
 /// <summary>
+/// <para>
 /// Stores a 16x16x16 grid of ints in a very memory
 /// efficient way. The storage method also allows
-/// for very quickly generating meshes.
+/// for quick generation meshes.
+/// </para>
 /// 
+/// <para>
 /// 8000 VoxelChunks will take up 264MB of memory in the worst
 /// case which is 4096 unique blocks within a VoxelChunk. This
 /// is very unlikely.
+/// 8000 VoxelChunks loaded results in 160 cubes in any direction
+/// from the center.
+/// </para>
 /// 
+/// <para>
 /// 8000 VoxelChunks with the average case of 25 unique
 /// blocks with reasonably split geometry should take up
-/// less than 6MB.
+/// less than 5MB.
+/// </para>
 /// 
+/// <para>
 /// 8000 non-empty VoxelChunks best case will take up
 /// less than 1MB of memory.
+/// </para>
 /// 
+/// <para>
 /// The trade off for this efficiency is that read / 
 /// write speed is slow. Setting a block worst case
 /// is 2-3 ms. And reading a block from a position
 /// worst case is 2-3 ms.
+/// </para>
+/// 
+/// <para>
+/// High memory fragmentation can be avoid if all sets,
+/// are called on a per VoxelChunk basis, before moving on
+/// to the next VoxelChunk. After all data is inserted, it
+/// should not change very often, so the higher memory fragmentation
+/// vs bit arrays does not come into play.
+/// </para>
 /// </summary>
 class VoxelChunk
 {

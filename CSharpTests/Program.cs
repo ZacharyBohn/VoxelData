@@ -1,15 +1,15 @@
 ﻿using System.Diagnostics;
 
 Console.WriteLine("Starting tests");
-// VoxelChunkTests.Test0();
-// VoxelChunkTests.Test1();
-// VoxelChunkTests.Test2();
-// VoxelChunkTests.Test3();
-// VoxelChunkTests.Test4();
-// VoxelChunkTests.Test5();
-// VoxelChunkTests.Test6();
+VoxelChunkTests.Test0();
+VoxelChunkTests.Test1();
+VoxelChunkTests.Test2();
+VoxelChunkTests.Test3();
+VoxelChunkTests.Test4();
+VoxelChunkTests.Test5();
+VoxelChunkTests.Test6();
 VoxelChunkTests.Test7();
-// VoxelChunkTests.Test8();
+VoxelChunkTests.Test8();
 Console.WriteLine("All tests completed");
 
 class VoxelChunkTests
@@ -180,7 +180,10 @@ class VoxelChunkTests
             chunk.SetBlock(new(9, 0, 1), 0);
             chunk.SetBlock(new(4, 7, 2), 0);
             chunk.SetBlock(new(6, 0, 0), 0);
-            chunk.SetBlock(new(15, 15, 15), 0);
+            chunk.SetBlock(new(2, 2, 4), 0);
+            chunk.SetBlock(new(3, 3, 4), 0);
+            chunk.SetBlock(new(9, 9, 4), 0);
+            chunk.SetBlock(new(10, 15, 15), 0);
             chunk.SetBlock(new(2, 0, 1), 3);
             chunk.SetBlock(new(2, 7, 2), 3);
             chunk.SetBlock(new(2, 1, 1), 3);
