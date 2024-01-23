@@ -66,6 +66,7 @@ class VoxelChunk
 
     public int GetBlock(Point3D position)
     {
+        // TODO: sorting
         foreach (CuboidSpan span in Spans)
         {
             if (span.Contains(position)) return span.Id;
@@ -102,8 +103,36 @@ class VoxelChunk
             return;
         }
 
+        // TODO: sorting
         Spans.Add(span);
         MergeRecursively(span);
+        return;
+    }
+
+    /// <summary>
+    /// Inserts the span into Spans while keeping ordering.
+    /// </summary>
+    private void InsertSpan(CuboidSpan span)
+    {
+        int low = 0;
+        int high = Spans.Count - 1;
+        int middle = high / 2;
+        while (low < high)
+        {
+            middle = low + ((high - low) / 2);
+            if (Spans[middle].Compare(span) == Positioning.before)
+            {
+                high = middle - 1;
+            }
+            if (Spans[middle].Compare(span) == Positioning.after)
+            {
+                low = middle + 1;
+            }
+            if (Spans[middle].Compare(span) == Positioning.overlap)
+            {
+                // shouldn't be possible?
+            }
+        }
         return;
     }
 
@@ -116,6 +145,7 @@ class VoxelChunk
     /// returns false</returns>
     private bool MergeRecursively(CuboidSpan span)
     {
+        // TODO: sorting
         // span does not need to be removed from the Blocks
         // since it is the newly created span coming in.
         // however, all other spans that can be merged recursively
@@ -196,6 +226,7 @@ class VoxelChunk
     /// </summary>
     private void Split(CuboidSpan splitter, int exclude = -1)
     {
+        // TODO: sorting
         // TODO: like 80% of the time for setting / getting
         // a block, is spent in this function (verified)
         // could sort spans by x,z,y.
@@ -688,10 +719,58 @@ struct CuboidSpan
         );
     }
 
+    /// <summary>
+    /// Returns Position.before if other comes
+    /// before this span.
+    /// Returns Position.after if other comes
+    /// after this span.
+    /// Return Position.overlap if other overlaps
+    /// with this span.
+    /// </summary>
+    public readonly Positioning Compare(CuboidSpan other)
+    {
+        if (other.Start.X < Start.X)
+        {
+            return Positioning.before;
+        }
+        if (other.Start.X > Start.X)
+        {
+            return Positioning.after;
+        }
+        // x is equal
+
+        if (other.Start.Z < Start.Z)
+        {
+            return Positioning.before;
+        }
+        if (other.Start.Z > Start.Z)
+        {
+            return Positioning.after;
+        }
+        // z is equal
+
+        if (other.Start.Y < Start.Y)
+        {
+            return Positioning.before;
+        }
+        if (other.Start.Y > Start.Y)
+        {
+            return Positioning.after;
+        }
+        return Positioning.overlap;
+    }
+
     public override readonly string ToString()
     {
         return $"ID: {id}, Start: {Start}, End: {End}";
     }
+}
+
+enum Positioning
+{
+    before = -1,
+    overlap = 0,
+    after = 1,
 }
 
 /// <summary>
